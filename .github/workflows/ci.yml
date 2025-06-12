@@ -33,7 +33,7 @@ jobs:
       - name: Build Docker image
         run: docker build -t real-estate-agent:latest .
       - name: Trivy vulnerability scan
-        uses: aquasecurity/trivy-action@0.13.1
+        uses: aquasecurity/trivy-action@0.31.0
         with:
           image-ref: real-estate-agent:latest
           severity: CRITICAL,HIGH
