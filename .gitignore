@@ -1,0 +1,52 @@
+# ----- Python & Virtualenv -----
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+venv/
+.venv/
+venv311/
+*.env
+.env
+
+# ----- Jupyter / IPython -----
+.ipynb_checkpoints/
+
+# ----- Logs & Temp -----
+*.log
+*.pot
+*.cache
+*.pytest_cache/
+
+# ----- OS -----
+.DS_Store
+Thumbs.db
+
+# ----- IDEs & Editors -----
+.vscode/
+.idea/
+*.iml
+
+# ----- Data & Artifacts -----
+# Raw and processed data
+/data/
+*.db
+otodom.db
+
+# ----- Docker -----
+*.env
+*.local
+
+# ----- Build -----
+build/
+site/
+
+# ----- Coverage -----
+.coverage
+htmlcov/
+
+# ----- Misc -----
+*.bak
+*.swp
+

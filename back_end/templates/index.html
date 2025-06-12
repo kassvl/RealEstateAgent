@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="{{ current_lang }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏠 {{ texts.title|default('Analyseur de Pièces Immobilières') }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .input-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        input[type="url"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="url"]:focus {
+            outline: none;
+            border-color: #4facfe;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .status-section {
+            display: none;
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .progress-bar {
+            background: #e1e5e9;
+            border-radius: 10px;
+            height: 20px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s;
+            border-radius: 10px;
+        }
+
+        .status-message {
+            text-align: center;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .results-section {
+            display: none;
+        }
+
+        .result-card {
+            background: white;
+            border: 1px solid #e1e5e9;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .result-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: 700;
+            color: #4facfe;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .rooms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .room-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            border-left: 4px solid #4facfe;
+        }
+
+        .room-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .room-count {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .images-section {
+            margin-top: 30px;
+        }
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+                 .image-item {
+             background: white;
+             border: 1px solid #e1e5e9;
+             border-radius: 10px;
+             padding: 15px;
+             text-align: center;
+             transition: transform 0.2s, box-shadow 0.2s;
+         }
+
+         .image-item:hover {
+             transform: translateY(-2px);
+             box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+         }
+
+         .image-item.duplicate {
+             border-color: #ffc107;
+             background: #fff8e1;
+         }
+
+         .image-preview {
+             width: 100%;
+             height: 200px;
+             object-fit: cover;
+             border-radius: 8px;
+             margin-bottom: 15px;
+             cursor: pointer;
+             transition: transform 0.2s;
+         }
+
+         .image-preview:hover {
+             transform: scale(1.02);
+         }
+
+         .image-number {
+             font-weight: 600;
+             color: #4facfe;
+             margin-bottom: 10px;
+         }
+
+         .room-type {
+             font-weight: 600;
+             margin-bottom: 5px;
+         }
+
+         .room-status {
+             font-size: 0.9em;
+             color: #666;
+         }
+
+         .image-modal {
+             display: none;
+             position: fixed;
+             z-index: 1000;
+             left: 0;
+             top: 0;
+             width: 100%;
+             height: 100%;
+             background-color: rgba(0,0,0,0.9);
+             cursor: pointer;
+         }
+
+         .modal-content {
+             position: absolute;
+             top: 50%;
+             left: 50%;
+             transform: translate(-50%, -50%);
+             max-width: 90%;
+             max-height: 90%;
+             border-radius: 10px;
+         }
+
+         .close-modal {
+             position: absolute;
+             top: 20px;
+             right: 30px;
+             color: white;
+             font-size: 40px;
+             font-weight: bold;
+             cursor: pointer;
+         }
+
+         .loading-placeholder {
+             width: 100%;
+             height: 200px;
+             background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+             background-size: 200% 100%;
+             animation: loading 1.5s infinite;
+             border-radius: 8px;
+             margin-bottom: 15px;
+         }
+
+         @keyframes loading {
+             0% { background-position: 200% 0; }
+             100% { background-position: -200% 0; }
+         }
+
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #c62828;
+        }
+
+        .success-message {
+            background: #e8f5e8;
+            color: #2e7d32;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #2e7d32;
+        }
+
+                 .download-btn {
+             background: #28a745;
+             color: white;
+             text-decoration: none;
+             padding: 10px 20px;
+             border-radius: 5px;
+             display: inline-block;
+             margin-top: 15px;
+         }
+
+         .gallery-section {
+             margin: 20px 0;
+         }
+
+         .gallery-grid {
+             display: grid;
+             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+             gap: 10px;
+             margin-top: 15px;
+         }
+
+         .gallery-item {
+             position: relative;
+             border-radius: 8px;
+             overflow: hidden;
+             cursor: pointer;
+             transition: transform 0.2s;
+         }
+
+         .gallery-item:hover {
+             transform: scale(1.05);
+         }
+
+         .gallery-image {
+             width: 100%;
+             height: 120px;
+             object-fit: cover;
+         }
+
+         .gallery-overlay {
+             position: absolute;
+             bottom: 0;
+             left: 0;
+             right: 0;
+             background: linear-gradient(transparent, rgba(0,0,0,0.7));
+             color: white;
+             padding: 8px;
+             font-size: 0.8em;
+             text-align: center;
+         }
+
+        .config-info {
+            background: #e3f2fd;
+            border: 1px solid #2196f3;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .language-selector {
+            margin-top: 15px;
+        }
+        
+        .lang-btn {
+            display: inline-block;
+            padding: 8px 15px;
+            margin: 0 5px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+        
+        .lang-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .lang-btn.active {
+            background: rgba(255,255,255,0.4);
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏠 {{ texts.app_title }}</h1>
+            <p>{{ texts.app_description }}</p>
+            <div class="language-selector">
+                <a href="/set_language/fr" class="language-link" data-lang="fr">🇫🇷 Français</a>
+                <a href="/set_language/en" class="language-link" data-lang="en">🇬🇧 English</a>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- Configuration Info -->
+            <div class="config-info" id="configInfo">
+                <strong>🚀 {{ texts.mode|default('Mode') }}: </strong><span id="modeInfo">{{ texts.loading|default('Chargement...') }}</span><br>
+                <strong>🔑 API: </strong><span id="apiInfo">{{ texts.checking|default('Vérification...') }}</span>
+            </div>
+
+            <!-- Input Section -->
+            <div class="input-section">
+                <h2>📝 {{ texts.enter_url|default('Entrez l\'URL d\'une annonce Otodom') }}</h2>
+                <div class="input-group">
+                    <label for="listing-url" id="url-label">{{ texts.enter_url|default('Entrez l\'URL d\'une annonce Otodom') }}</label>
+                    <input type="url" id="listing-url" placeholder="https://www.otodom.pl/..." required>
+                </div>
+                <button type="button" id="analyze-btn" class="btn">{{ texts.analyze_button|default('Analyser') }}</button>
+            </div>
+
+            <!-- Status Section -->
+            <div class="status-section" id="statusSection">
+                <h2>⏳ {{ texts.analysis_in_progress|default('Analyse en cours...') }}</h2>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="status-message" id="statusMessage">{{ texts.initializing|default('Initialisation...') }}</div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results-section" id="resultsSection">
+                <!-- Les résultats seront affichés ici -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour afficher les images en grand -->
+    <div id="imageModal" class="image-modal" onclick="closeImageModal()">
+        <span class="close-modal" onclick="closeImageModal()">&times;</span>
+        <img class="modal-content" id="modalImage">
+    </div>
+
+    <script>
+        let currentAnalysisId = null;
+        let statusInterval = null;
+
+        // Charger la configuration au démarrage
+        window.addEventListener('DOMContentLoaded', function() {
+            // Initialiser l'interface
+            checkApiStatus();
+            
+            // Charger les traductions pour la langue actuelle
+            fetch('/config')
+                .then(response => response.json())
+                .then(config => {
+                    updateDynamicTexts(config.current_language);
+                });
+            
+            // Gestionnaire pour le bouton de démarrage
+            document.getElementById('analyze-btn').addEventListener('click', startAnalysis);
+            
+            // Gestionnaire pour la touche Entrée dans le champ URL
+            document.getElementById('listing-url').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    startAnalysis();
+                }
+            });
+            
+            // Initialiser la modale
+            initModal();
+            
+            // Gestionnaires pour les liens de changement de langue
+            document.querySelectorAll('.language-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    // Ne pas empêcher la navigation par défaut, laisser le lien fonctionner normalement
+                    // pour recharger la page avec la nouvelle langue
+                });
+            });
+        });
+        
+        // Fonction pour mettre à jour les textes dynamiques qui ne sont pas dans le HTML initial
+        function updateDynamicTexts(lang) {
+            // Cette fonction sera utilisée pour mettre à jour les textes qui sont générés dynamiquement
+            // Les textes seront chargés depuis le serveur et appliqués aux éléments dynamiques
+            fetch(`/translations/${lang}`)
+                .then(response => response.json())
+                .then(texts => {
+                    window.appTexts = texts; // Stocker les traductions pour une utilisation ultérieure
+                    
+                    // Mettre à jour les textes statiques qui ne sont pas gérés par Jinja
+                    updateStaticElements();
+                })
+                .catch(error => {
+                    console.error('Erreur lors du chargement des traductions:', error);
+                });
+        }
+        
+        // Fonction pour mettre à jour les éléments statiques avec les traductions
+        function updateStaticElements() {
+            if (!window.appTexts) return;
+            
+            // Mettre à jour les textes des boutons et labels
+            const analyzeBtn = document.getElementById('analyze-btn');
+            if (analyzeBtn) {
+                analyzeBtn.innerText = window.appTexts.analyze_button || 'Analyser';
+            }
+            
+            const urlLabel = document.getElementById('url-label');
+            if (urlLabel) {
+                urlLabel.innerText = window.appTexts.enter_url || 'Entrez l\'URL d\'une annonce Otodom';
+            }
+            
+            // Ne pas mettre à jour les titres et sous-titres car ils sont gérés par Jinja2
+            
+            // Mettre à jour les éléments de configuration
+            // Ces éléments sont mis à jour par la fonction checkApiStatus
+            
+            // Après avoir mis à jour les traductions, vérifier l'API à nouveau
+            checkApiStatus();
+        }
+
+        function startAnalysis() {
+            const url = document.getElementById('listing-url').value.trim();
+            
+            if (!url) {
+                const message = window.appTexts ? window.appTexts.invalid_url : 'Veuillez entrer une URL valide';
+                alert(message);
+                return;
+            }
+
+            // Désactiver le bouton et afficher le statut
+            document.getElementById('analyze-btn').disabled = true;
+            document.getElementById('statusSection').style.display = 'block';
+            document.getElementById('resultsSection').style.display = 'none';
+
+            // Lancer l'analyse
+            fetch('/analyze', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ url: url })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    showError(data.error);
+                    return;
+                }
+                
+                currentAnalysisId = data.analysis_id;
+                
+                // Commencer à vérifier le statut
+                statusInterval = setInterval(checkStatus, 2000);
+            })
+            .catch(error => {
+                const errorMsg = window.appTexts ? window.appTexts.analysis_error : 'Erreur lors du démarrage de l\'analyse';
+                showError(errorMsg + ': ' + error.message);
+            });
+        }
+
+        function checkStatus() {
+            if (!currentAnalysisId) return;
+
+            fetch(`/status/${currentAnalysisId}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Status data:", data);
+                    updateProgress(data.progress || 0, data.message || 'En cours...');
+                    
+                    if (data.status === 'completed') {
+                        console.log("Analysis completed! Data:", data);
+                        clearInterval(statusInterval);
+                        // Tüm veriyi gönder, çünkü sonuçlar data nesnesinin içinde
+                        showResults(data);
+                    } else if (data.status === 'error') {
+                        clearInterval(statusInterval);
+                        const unknownError = window.appTexts ? window.appTexts.unknown_error : 'Erreur inconnue';
+                        showError(data.error || unknownError);
+                    }
+                })
+                .catch(error => {
+                    const errorMsg = window.appTexts ? window.appTexts.status_error : 'Erreur lors de la vérification du statut';
+                    console.error(errorMsg + ':', error);
+                });
+        }
+
+        function updateProgress(progress, message) {
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('statusMessage').textContent = message;
+        }
+        
+        function checkApiStatus() {
+            fetch('/config')
+                .then(response => response.json())
+                .then(data => {
+                    const modeInfo = document.getElementById('modeInfo');
+                    const apiInfo = document.getElementById('apiInfo');
+                    
+                    // Mettre à jour les informations de mode et d'API
+                    if (modeInfo) {
+                        modeInfo.textContent = data.batch_mode ? 
+                            (window.appTexts?.batch_mode || 'Batch') : 
+                            (window.appTexts?.individual_mode || 'Individuel');
+                    }
+                    
+                    if (apiInfo) {
+                        if (data.api_configured) {
+                            apiInfo.textContent = window.appTexts?.api_configured || 'Configurée ✅';
+                            apiInfo.style.color = '#2e7d32';
+                        } else {
+                            apiInfo.textContent = window.appTexts?.api_missing || 'Non configurée ❌';
+                            apiInfo.style.color = '#c62828';
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur lors de la vérification de la configuration:', error);
+                });
+        }
+
+        function showError(error) {
+            const resultsSection = document.getElementById('resultsSection');
+            resultsSection.style.display = 'block';
+            const texts = window.appTexts || {};
+            const errorTitle = texts.error || 'Erreur';
+            
+            resultsSection.innerHTML = `
+                <div class="error-message">
+                    <h3>❌ ${errorTitle}</h3>
+                    <p>${error}</p>
+                </div>
+            `;
+        }
+
+        function showResults(data) {
+            console.log("showResults called with data:", data);
+            
+            // Önce analiz durumunu ve sonuçlarını kontrol et
+            if (!data || data.status !== 'completed') {
+                console.error("Results not ready or invalid data", data);
+                return;
+            }
+            
+            // Sonuç bölümünü göster
+            const resultsSection = document.getElementById('resultsSection');
+            if (!resultsSection) {
+                console.error("Results section not found!");
+                return;
+            }
+            
+            // Durum bölümünü gizle
+            const statusSection = document.getElementById('statusSection');
+            if (statusSection) {
+                statusSection.style.display = 'none';
+            }
+            
+            resultsSection.style.display = 'block';
+            
+            try {
+                // Sonuçları doğru yerden al
+                const results = data.results || {};
+                console.log("Results extracted:", results);
+                const listing = results.listing_details || {};
+                const executionTime = data.execution_time || 0;
+                const batchMode = results.batch_mode_used ? 'BATCH' : 'INDIVIDUEL';
+                
+                // Utiliser les traductions si disponibles
+                const texts = window.appTexts || {};
+                const successTitle = texts.analysis_success || 'Analyse terminée avec succès!';
+                const executionTimeLabel = texts.execution_time_label || 'Temps d\'exécution:';
+                const modeLabel = texts.mode_label || 'Mode:';
+                const statsTitle = texts.statistics || 'Statistiques';
+                const titleLabel = texts.title_label || 'Titre:';
+                const locationLabel = texts.location_label || 'Localisation:';
+                const priceLabel = texts.price_label || 'Prix:';
+                const notAvailable = texts.not_available || 'Non disponible';
+                const imagesAnalyzed = texts.images_analyzed || 'Images analysées';
+                const uniqueRooms = texts.unique_rooms || 'Pièces uniques';
+                const duplicateImages = texts.duplicate_images || 'Images en double';
+                const executionTimeText = texts.execution_time || 'Temps d\'exécution';
+                const roomDistribution = texts.room_distribution || 'Répartition des pièces';
+                const detailedAnalysis = texts.detailed_analysis || 'Analyse détaillée par image';
+                
+                // HTML içeriğini oluştur
+                let html = `
+                    <div class="success-message">
+                        <h3>✅ ${successTitle}</h3>
+                        <p>${executionTimeLabel} ${executionTime.toFixed(1)}s | ${modeLabel} ${batchMode}</p>
+                    </div>
+
+                    <div class="result-card">
+                        <div class="result-title">📊 ${statsTitle}</div>
+                        <p><strong>${titleLabel}</strong> ${listing.title || notAvailable}</p>
+                        <p><strong>${locationLabel}</strong> ${listing.location_string || notAvailable}</p>
+                        <p><strong>${priceLabel}</strong> ${listing.price || notAvailable} ${listing.currency || ''}</p>
+                        
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-number">${results.total_images || 0}</div>
+                                <div class="stat-label">${imagesAnalyzed}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">${results.unique_rooms_detected || 0}</div>
+                                <div class="stat-label">${uniqueRooms}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">${results.duplicate_images_found || 0}</div>
+                                <div class="stat-label">${duplicateImages}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">${executionTime.toFixed(1)}s</div>
+                                <div class="stat-label">${executionTimeText}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="result-card">
+                        <div class="result-title">🏠 ${roomDistribution}</div>
+                        <div class="room-list">
+                `;
+                
+                // Oda dağılımını ekle
+                console.log("Room summary:", results.room_summary);
+                
+                if (results.room_summary && Object.keys(results.room_summary).length > 0) {
+                    for (const [roomType, count] of Object.entries(results.room_summary)) {
+                        if (roomType && roomType !== "null") {
+                            const displayName = roomType.replace(/_/g, ' ');
+                            html += `
+                                <div class="room-item">
+                                    <div class="room-name">${displayName}</div>
+                                    <div class="room-count">${count} pièce(s)</div>
+                                </div>
+                            `;
+                        }
+                    }
+                } else {
+                    html += `<div class="room-item"><div class="room-name">Aucune pièce détectée</div></div>`;
+                }
+                
+                html += `
+                        </div>
+                    </div>
+                `;
+
+                // Mülk Özetini Ekle
+                let propertySummaryText = results.property_summary_text || (texts.not_available || 'Non disponible');
+                const propertySummaryTitle = texts.property_summary_title || 'Résumé de la propriété';
+
+                // Replace newline characters with <br> tags for HTML display
+                if (typeof propertySummaryText === 'string') {
+                    propertySummaryText = propertySummaryText.replace(/\n/g, '<br>');
+                }
+
+                html += `
+                    <div class="result-card">
+                        <div class="result-title">📝 ${propertySummaryTitle}</div>
+                        <p style="word-wrap: break-word;">${propertySummaryText}</p> 
+                    </div>
+                `;
+                
+                // Sonuçları DOM'a ekle
+                resultsSection.innerHTML = html;
+                
+                // Sonuç bölümüne kaydır
+                resultsSection.scrollIntoView({ behavior: 'smooth' });
+            } catch (error) {
+                console.error("Error displaying results:", error);
+                showError("Une erreur s'est produite lors de l'affichage des résultats.");
+            }
+            
+            html = `
+                <div class="result-card">
+                    <div class="result-title"> ${texts.detailed_analysis || 'Analyse détaillée par image'}</div>
+                    <div class="image-grid">
+            `;
+
+            // Ajouter les détails par image
+            if (Array.isArray(results.room_classifications)) {
+                console.log("Room classifications found:", results.room_classifications.length);
+                
+                for (const classification of results.room_classifications) {
+                    const isDuplicate = classification.is_duplicate;
+                    const roomDetails = classification.room_type_details || {};
+                    const imageUrl = classification.image_url;
+                    const imageIndex = classification.image_index;
+                    
+                    html += `
+                        <div class="image-item ${isDuplicate ? 'duplicate' : ''}">
+                            <img 
+                                src="${imageUrl}" 
+                                alt="Image ${imageIndex + 1}" 
+                                class="image-preview"
+                                onclick="openImageModal('${imageUrl}', '${imageIndex + 1}')"
+                                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                            >
+                            <div class="loading-placeholder" style="display: none;">
+                                <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #666;">
+                                    ${texts.image_load_error || 'Erreur de chargement'}
+                                </div>
+                            </div>
+                            <div class="image-info">
+                                <div class="image-number">#${imageIndex + 1}</div>
+                                <div class="room-type">${roomDetails.name || classification.room_type || 'Inconnu'}</div>
+                                ${isDuplicate ? `<div class="duplicate-badge">${texts.duplicate || 'Doublon'}</div>` : ''}
+                            </div>
+                        </div>
+                    `;
+                }
+            } else {
+                console.error("No room classifications found in results", results);
+            }
+
+            html += `
+                    </div>
+                    <a href="/download/analysis_${results.analysis_id}.json" class="download-btn">
+                        📥 ${texts.download_results || 'Télécharger les résultats JSON'}
+                    </a>
+                </div>
+            `;
+
+            return html;
+        }
+
+                 function getRoomDetails(roomType, classifications) {
+             for (const classification of classifications) {
+                 if (classification.room_type_id === roomType && classification.room_type_details) {
+                     return classification.room_type_details;
+                 }
+             }
+             return { name: roomType };
+         }
+
+         function openImageModal(imageUrl, imageNumber) {
+             const modal = document.getElementById('imageModal');
+             const modalImg = document.getElementById('modalImage');
+             
+             modal.style.display = 'block';
+             modalImg.src = imageUrl;
+             modalImg.alt = `Image ${imageNumber} - Vue agrandie`;
+             
+             // Empêcher la propagation du clic sur l'image
+             modalImg.onclick = function(e) {
+                 e.stopPropagation();
+             };
+         }
+
+         function closeImageModal() {
+             document.getElementById('imageModal').style.display = 'none';
+         }
+
+         // Fermer le modal avec la touche Escape
+         document.addEventListener('keydown', function(event) {
+             if (event.key === 'Escape') {
+                 closeImageModal();
+             }
+         });
+    </script>
+</body>
+</html>

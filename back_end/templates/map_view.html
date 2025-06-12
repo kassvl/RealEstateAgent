@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Otodom Wroclaw Listings Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+    <style>
+        body { margin: 0; padding: 0; font-family: Arial, sans-serif; }
+        #map { height: 100vh; width: 100%; }
+        .leaflet-popup-content-wrapper {
+            border-radius: 5px;
+        }
+        .leaflet-popup-content p {
+            margin: 0.5em 0;
+        }
+        .leaflet-popup-content a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .leaflet-popup-content a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+
+    <script>
+        // Wroclaw coordinates
+        const wroclawLat = 51.1079;
+        const wroclawLng = 17.0385;
+
+        var map = L.map('map').setView([wroclawLat, wroclawLng], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+
+        // Data passed from Flask (ensure this is properly JSON-encoded and unescaped in the template)
+        var listingsData = {{ listings_json | safe }};
+
+        if (listingsData && listingsData.length > 0) {
+            listingsData.forEach(function(listing) {
+                if (listing.latitude && listing.longitude) {
+                    var marker = L.marker([listing.latitude, listing.longitude]).addTo(map);
+                    
+                    let popupContent = `<b>${listing.title || 'N/A'}</b>`;
+                    if (listing.price && listing.currency) {
+                        popupContent += `<br>Price: ${listing.price} ${listing.currency}`;
+                    }
+                    if (listing.area_sqm) {
+                        popupContent += `<br>Area: ${listing.area_sqm} m²`;
+                    }
+                    if (listing.rooms) {
+                        popupContent += `<br>Rooms: ${listing.rooms}`;
+                    }
+                    if (listing.detail_url) {
+                        popupContent += `<br><a href="${listing.detail_url}" target="_blank">View Details</a>`;
+                    }
+                    marker.bindPopup(popupContent);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+site_name: Real Estate Agent
+nav:
+  - Overview: docs/overview.md
+  - Architecture: docs/architecture.md
+  - API: docs/api.md
+theme:
+  name: material
+  features:
+    - navigation.tabs

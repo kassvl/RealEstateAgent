@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: scraper
+spec:
+  schedule: "{{ .Values.scraper.schedule }}"
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 2
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: scraper
+              image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+              command: ["python", "back_end/store_listings.py", "--pages", "{{ .Values.scraper.pages }}"]
+              env:
+                - name: REDIS_URL
+                  value: redis://redis:6379/0
+              resources:
+{{ toYaml .Values.scraper.resources | indent 16 }}

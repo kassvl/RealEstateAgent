@@ -1,0 +1,46 @@
+name: Lint and Tests
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: realestate
+          POSTGRES_PASSWORD: realestate
+          POSTGRES_DB: realestate
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U realestate" --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install black isort flake8 bandit pytest
+
+      - name: Run pre-commit (lint)
+        run: |
+          pip install pre-commit
+          pre-commit run --all-files
+
+      - name: Run pytest
+        env:
+          DATABASE_URL: postgresql://realestate:realestate@localhost:5432/realestate
+        run: pytest -q

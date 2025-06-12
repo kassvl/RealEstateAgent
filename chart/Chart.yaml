@@ -1,0 +1,5 @@
+apiVersion: v2
+name: real-estate-agent
+version: 0.1.0
+description: Helm umbrella chart for Otodom scraper + ML pipeline
+appVersion: "1.0.0"

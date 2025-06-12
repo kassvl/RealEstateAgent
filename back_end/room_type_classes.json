@@ -1,0 +1,164 @@
+[
+    {
+      "id": "living_room",
+      "name": "Oturma Odası",
+      "description": "Misafir ağırlama ve dinlenme alanı.",
+      "is_habitable": true
+    },
+    {
+      "id": "dining_room",
+      "name": "Yemek Odası",
+      "description": "Yemek yeme ve servis alanı.",
+      "is_habitable": true
+    },
+    {
+      "id": "living_dining_room",
+      "name": "Oturma ve Yemek Odası (Birleşik)",
+      "description": "Hem oturma hem de yemek alanı olarak kullanılan birleşik salon.",
+      "is_habitable": true
+    },
+    {
+      "id": "bedroom",
+      "name": "Yatak Odası",
+      "description": "Dinlenme ve uyuma alanı.",
+      "is_habitable": true
+    },
+    {
+      "id": "master_bedroom",
+      "name": "Ebeveyn Yatak Odası",
+      "description": "Ev sahibinin ana yatak odası, genellikle daha büyüktür ve bazen ebeveyn banyosu içerir.",
+      "is_habitable": true
+    },
+    {
+      "id": "guest_bedroom",
+      "name": "Misafir Yatak Odası",
+      "description": "Misafirler için ayrılmış yatak odası.",
+      "is_habitable": true
+    },
+    {
+      "id": "childrens_room",
+      "name": "Çocuk Odası",
+      "description": "Çocuklar için düzenlenmiş yatak ve oyun alanı.",
+      "is_habitable": true
+    },
+    {
+      "id": "kitchen",
+      "name": "Mutfak",
+      "description": "Yemek hazırlama ve pişirme alanı.",
+      "is_habitable": true
+    },
+    {
+      "id": "open_plan_kitchen_living_dining",
+      "name": "Açık Plan Mutfak, Oturma ve Yemek Odası",
+      "description": "Mutfak, oturma ve yemek alanlarının bir arada, duvarsız olduğu geniş bir yaşam alanı.",
+      "is_habitable": true
+    },
+    {
+      "id": "bathroom",
+      "name": "Banyo",
+      "description": "Duş veya küvet, lavabo ve tuvalet içeren hijyen alanı.",
+      "is_habitable": false
+    },
+    {
+      "id": "toilet_wc",
+      "name": "Tuvalet (WC)",
+      "description": "Sadece tuvalet ve lavabo içeren alan.",
+      "is_habitable": false
+    },
+    {
+      "id": "balcony",
+      "name": "Balkon",
+      "description": "Binanın dışına uzanan açık veya yarı açık alan.",
+      "is_habitable": false
+    },
+    {
+      "id": "terrace",
+      "name": "Teras",
+      "description": "Binanın dışında veya üstünde bulunan geniş, açık alan.",
+      "is_habitable": false
+    },
+    {
+      "id": "garden",
+      "name": "Bahçe",
+      "description": "Evin etrafındaki açık yeşil alan.",
+      "is_habitable": false
+    },
+    {
+      "id": "home_office",
+      "name": "Çalışma Odası",
+      "description": "Evden çalışma veya ders çalışma alanı.",
+      "is_habitable": true
+    },
+    {
+      "id": "laundry_room",
+      "name": "Çamaşır Odası",
+      "description": "Çamaşır makinesi ve kurutucu bulunan oda.",
+      "is_habitable": false
+    },
+    {
+      "id": "storage_room",
+      "name": "Depo / Kiler",
+      "description": "Eşya depolama alanı.",
+      "is_habitable": false
+    },
+    {
+      "id": "hallway",
+      "name": "Antre / Koridor",
+      "description": "Odaları birbirine bağlayan geçiş alanı.",
+      "is_habitable": false
+    },
+    {
+      "id": "garage",
+      "name": "Garaj",
+      "description": "Araç park etme ve depolama alanı.",
+      "is_habitable": false
+    },
+    {
+      "id": "basement",
+      "name": "Bodrum Katı",
+      "description": "Binanın zemin altındaki katı, genellikle depolama veya hobi amaçlı kullanılır.",
+      "is_habitable": false
+    },
+    {
+      "id": "attic",
+      "name": "Çatı Katı",
+      "description": "Binanın çatısının altında bulunan katı, genellikle depolama veya ek yaşam alanı olarak kullanılır.",
+      "is_habitable": true
+    },
+    {
+      "id": "game_room",
+      "name": "Oyun Odası",
+      "description": "Eğlence ve oyun amaçlı özel oda (bilardo, masa tenisi vb. için).",
+      "is_habitable": true
+    },
+    {
+      "id": "home_theater",
+      "name": "Ev Sineması",
+      "description": "Film izleme ve eğlence için tasarlanmış özel oda.",
+      "is_habitable": true
+    },
+    {
+      "id": "gym",
+      "name": "Spor Odası",
+      "description": "Evde egzersiz yapmak için kullanılan oda.",
+      "is_habitable": true
+    },
+    {
+      "id": "walk_in_closet",
+      "name": "Giyinme Odası",
+      "description": "Kıyafet ve aksesuarların düzenli saklandığı özel oda.",
+      "is_habitable": false
+    },
+    {
+      "id": "utility_room",
+      "name": "Teknik Oda",
+      "description": "Kazan, su ısıtıcı, elektrik panosu gibi teknik ekipmanların bulunduğu oda.",
+      "is_habitable": false
+    },
+    {
+      "id": "other",
+      "name": "Diğer",
+      "description": "Yukarıdaki kategorilere uymayan diğer oda tipleri.",
+      "is_habitable": null
+    }
+  ]

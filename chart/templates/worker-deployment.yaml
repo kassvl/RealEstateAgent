@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker
+spec:
+  replicas: {{ .Values.worker.replicaCount }}
+  selector:
+    matchLabels:
+      app: worker
+  template:
+    metadata:
+      labels:
+        app: worker
+    spec:
+      containers:
+        - name: worker
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          command: ["celery", "-A", "back_end.tasks", "worker", "--loglevel", "info"]
+          env:
+            - name: REDIS_URL
+              value: redis://redis:6379/0
+          resources:
+{{ toYaml .Values.worker.resources | indent 12 }}

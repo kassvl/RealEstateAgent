@@ -1,0 +1,6 @@
+project: real_estate_fs
+registry: ./feature_repo/registry.db
+provider: redis
+online_store:
+  type: redis
+  connection_string: redis://redis:6379/1

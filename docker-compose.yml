@@ -1,0 +1,125 @@
+version: '3.9'
+services:
+  scraper:
+    build: .
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=postgresql://realestate:realestate@postgres:5432/realestate
+    volumes:
+      - ./back_end:/app/back_end
+      - ./data:/app/data
+    ports:
+      - "8000:8000"
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+  worker:
+    build: .
+    command: celery -A back_end.tasks worker --loglevel=info --concurrency=4
+    env_file:
+      - .env
+    depends_on:
+      - redis
+  api:
+    build: .
+    command: uvicorn api.main:app --host 0.0.0.0 --port 8001
+    volumes:
+      - .:/app
+    ports:
+      - "8001:8001"
+    depends_on:
+      - scraper
+      - jaeger
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - JAEGER_HOST=jaeger
+  ui:
+    build: .
+    command: streamlit run ui_app.py --server.port 8501 --server.headless true
+    volumes:
+      - .:/app
+    ports:
+      - "8501:8501"
+    depends_on:
+      - api
+  airflow-webserver:
+    image: apache/airflow:2.8.4-python3.11
+    environment:
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=sqlite:////app/airflow/airflow.db
+    volumes:
+      - ./airflow_dags:/opt/airflow/dags
+      - ./mlruns:/app/mlruns
+    ports:
+      - "8081:8080"
+    command: bash -c "airflow db init && airflow users create --username admin --password admin --firstname a --lastname b --role Admin --email admin@example.com && airflow webserver"
+  airflow-scheduler:
+    image: apache/airflow:2.8.4-python3.11
+    volumes:
+      - ./airflow_dags:/opt/airflow/dags
+      - ./mlruns:/app/mlruns
+    depends_on:
+      - airflow-webserver
+    command: bash -c "airflow scheduler"
+  vault:
+    image: hashicorp/vault:1.14
+    environment:
+      - VAULT_DEV_ROOT_TOKEN_ID=root
+      - VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200
+    ports:
+      - "8200:8200"
+    command: vault server -dev -dev-root-token-id=root
+    healthcheck:
+      disable: true
+  vault-init:
+    image: hashicorp/vault:1.14
+    depends_on:
+      - vault
+    volumes:
+      - ./scripts/init_vault.sh:/init_vault.sh:ro
+    environment:
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=root
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-replace_me}
+      - PROXY_LIST=${PROXY_LIST:-}
+    entrypoint: ["/bin/sh", "/init_vault.sh"]
+  jaeger:
+    image: jaegertracing/all-in-one:1.52
+    ports:
+      - "16686:16686"  # UI
+      - "6831:6831/udp"  # agent thrift
+  datahub-gms:
+    image: acryldata/datahub-gms:latest
+    environment:
+      - DATAHUB_JDBC_URL=jdbc:hsqldb:mem:datahubtest
+    ports:
+      - "8082:8080"
+  datahub-frontend:
+    image: acryldata/datahub-frontend-react:latest
+    environment:
+      - GMS_HOST=datahub-gms
+    ports:
+      - "9002:9002"
+  postgres:
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=realestate
+      - POSTGRES_PASSWORD=realestate
+      - POSTGRES_DB=realestate
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  tempo:
+    image: grafana/tempo:2.5.0
+    command: ["-config.file=/etc/tempo.yml"]
+    volumes:
+      - ./observability/tempo.yml:/etc/tempo.yml:ro
+    ports:
+      - "4317:4317"  # OTLP gRPC
+      - "3200:3200"  # Tempo query
+
+volumes:
+  postgres_data:
